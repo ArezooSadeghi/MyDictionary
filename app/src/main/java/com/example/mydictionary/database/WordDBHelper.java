@@ -54,7 +54,13 @@ public class WordDBHelper extends SQLiteOpenHelper {
         Word word = null;
         List<Word> words = new ArrayList<>();
         openDatabase();
-        Cursor cursor = mDatabase.rawQuery("SELECT * FROM dictionary", null);
+        Cursor cursor = mDatabase.query("dictionary",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
         if (cursor == null || cursor.getCount() == 0) {
             return words;
         }
