@@ -1,18 +1,20 @@
 package com.example.mydictionary.model;
 
+import java.util.UUID;
+
 public class Word {
     private String mName;
     private String mMean;
-    private int mId;
-    private int mFav;
+    private UUID mId;
 
     public Word() {
+        mId = UUID.randomUUID();
     }
 
-    public Word(String name, String mean, int id) {
+    public Word(String name, String mean) {
+        mId = UUID.randomUUID();
         mName = name;
         mMean = mean;
-        mId = id;
     }
 
     public void setName(String name) {
@@ -23,10 +25,6 @@ public class Word {
         mMean = mean;
     }
 
-    public void setFav(int fav) {
-        mFav = fav;
-    }
-
     public String getName() {
         return mName;
     }
@@ -35,11 +33,7 @@ public class Word {
         return mMean;
     }
 
-    public int getId() {
+    public UUID getId() {
         return mId;
-    }
-
-    public int getFav() {
-        return mFav;
     }
 }

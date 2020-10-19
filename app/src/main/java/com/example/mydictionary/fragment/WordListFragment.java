@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -12,13 +13,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mydictionary.R;
+import com.example.mydictionary.database.WordDBHelper;
 import com.example.mydictionary.model.Word;
 
-import java.util.ArrayList;
+import java.io.File;
 import java.util.List;
 
 public class WordListFragment extends Fragment {
     private RecyclerView mRecyclerView;
+    private WordDBHelper mWordDBHelper;
 
     public WordListFragment() {
 
@@ -43,6 +46,7 @@ public class WordListFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_word_list, container, false);
         findViews(view);
+        checkDatebaseExists();
         initViews();
         setAdapter();
         return view;
@@ -50,6 +54,22 @@ public class WordListFragment extends Fragment {
 
     private void findViews(View view) {
         mRecyclerView = view.findViewById(R.id.recyclerview_word_list);
+        mWordDBHelper = new WordDBHelper(getActivity());
+    }
+
+    private void checkDatebaseExists() {
+        File database = getActivity().getApplicationContext().getDatabasePath(WordDBHelper.DB_NAME);
+        if (database.exists() == false) {
+            mWordDBHelper.getReadableDatabase();
+            if (mWordDBHelper.copyDatabase(getActivity())) {
+                Toast.makeText(getActivity(), "copy database success", Toast.LENGTH_SHORT)
+                        .show();
+            } else {
+                Toast.makeText(getActivity(), "copy database error", Toast.LENGTH_SHORT)
+                        .show();
+                return;
+            }
+        }
     }
 
     private void initViews() {
@@ -57,7 +77,7 @@ public class WordListFragment extends Fragment {
     }
 
     private void setAdapter() {
-        List<Word> words = new ArrayList<>();
+        List<Word> words = mWordDBHelper.getWords();
         WordListAdapter adapter = new WordListAdapter(words);
         mRecyclerView.setAdapter(adapter);
     }
@@ -105,7 +125,7 @@ public class WordListFragment extends Fragment {
             }
 
             public void bindWord(Word word) {
-                mTextViewWord.setText(word.getName());
+                mTextViewWord.setText(word.getMean());
                 mWord = word;
             }
         }
